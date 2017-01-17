@@ -2,7 +2,6 @@
 var request = require('request');
 var fs = require('fs');
 var mysql = require('mysql');
-var async = require('async');
 
 //load require
 var ConsoleColor = require('../ConsoleColor.js');
