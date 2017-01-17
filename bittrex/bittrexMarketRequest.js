@@ -6,6 +6,7 @@ var async = require('async');
 
 //load require
 var ConsoleColor = require('../ConsoleColor.js');
+var Time = require('../Time.js');
 
 //config
 var config = JSON.parse(fs.readFileSync("./config.json"));
@@ -26,32 +27,40 @@ var options = {
   }
 };
 
+//connectie maken met mysql
+MYSQLConnection.connect(function(err){
+    if(err){
+        console.error(ConsoleColor.error()+err);
+    } else {
+        console.log(ConsoleColor.log()+"Connectie met mysql.");
+    }
+});
+
 //callback
 function callback(error, response,body) {
     if (error) {
         console.error(ConsoleColor.error()+"Probleem bij opvragen markt data van bittrex.");
     } else {
         
-        var totalMemoryDB= {};
         
         //MarktData
         var marktData = JSON.parse(body).result;
-        
+
         //loop om alle data om te zetten naar makkelijker sorteer moment
         for (i = 0; i < marktData.length; i++) { 
-            
+
             //trade market
             var tradeMarket = marktData[i].MarketName;
-            
+
             //if loop
             if(tradeMarket.substring(0,4) == "BTC-"){
-                
+
                 //get cointags
                 var coinTag = tradeMarket.substring(4);
-                
+
                 //get alle data
                 var data = {
-                    'Exchange': 'bittrex',
+                    'Markt': tradeMarket,
                     'High': marktData[i].High,
                     'Low': marktData[i].Low,
                     'Volume': marktData[i].Volume,
@@ -60,56 +69,28 @@ function callback(error, response,body) {
                     'OpenBuyOrders': marktData[i].OpenBuyOrders,
                     'OpenSellOrders': marktData[i].OpenSellOrders
                 };
+
+                var INSERTINFOQuary = "INSERT INTO `cryptoData`.`bittrexmarktdata` (`Markt`, `High`, `Low`, `Volume`, `Bid`, `Ask`, `OpenBuyOrders`, `OpenSellOrders`, `Datum`, `Time`)"
+                    + "VALUES ('" + data.Markt + "','" + data.High + "', '" + data.Low + "', '" + data.Volume 
+                    + "', '" + data.Bid + "', '" + data.Ask +  "', '" +data.OpenBuyOrders + "', '" + data.OpenSellOrders + "', '"+Time.dag()+"', '"+Time.time()+"')";
                 
-                totalMemoryDB[coinTag] = data;
+                
+                MYSQLConnection.query(INSERTINFOQuary, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                        console.error(ConsoleColor.error()+"Probleem bij data naar bittrexmarktdata te pushen.");
+                    } else {
+                        console.log(ConsoleColor.log()+"Data in bittrex gezet.");
+                    }
+                });   
             }
         }
     }
 }
 
-//reuqest
-request(options, callback);
+//Time reload
+setInterval(function() {
+    request(options, callback);
+}, 60000);
 
-//async
-async.series([
-    
-    //MYSQL CONNECTION
-    function(callback) {
-        
-        //connectie maken met mysql
-        MYSQLConnection.connect(function(err){
-            if(err){
-                console.error(ConsoleColor.error()+err);
-            } else {
-                console.log(ConsoleColor.log()+"Connectie met mysql.");
-            }
-        });
-    },
-    function(callback) {
-        
-    },
-    
-    //MYSQL CONNECTION
-    function(callback) {
-        //MYSQL close connection
-        MYSQLConnection.end(function(err){
-            if(err){
-                console.error(ConsoleColor.error()+"Kan mysql connentie niet opsluiten..");
-            } else {
-                console.log(ConsoleColor.log()+"Mysql connectie is afgesloten.");
-            };
-        });
-    }
-],
-// optional callback
-function(err, results) {
-    if(err){
-
-    } else {
-        console.log(ConsoleColor.log()+"Series schakeling bij MarktDataVerwerker gedaan.");
-    }
-});
-
-//String INSERTINFOQuary = "INSERT INTO `corendonbagagesystem`.`gevondenbagage` (`bagagelabel`, `kleur`, `dikte`, `lengte`, `breedte`, `luchthavengevonden`, `datum`, `bijzonderhede`, `merk`, `softhard`, status)"
-//                            + "VALUES ('" + InputBagageNummer.getText() + "','" + kofferKleur + "', '" + dikteKoffer + "', '" + lengteKoffer + "', '" + breedteKoffer + "', '" + locatieKoffer + "', CURDATE(), '" + Bijzonderheden.getText() + "', '" + merkKoffer + "', '" + softHardCase + "', 'notSolved')";
-                        
+console.log(ConsoleColor.log()+"Bittrex market request.");
