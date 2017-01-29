@@ -1,5 +1,5 @@
 {
-  "name": "server_trading",
+  "name": "servertrading",
   "version": "1.0.0",
   "keywords": [
     "util",
@@ -12,6 +12,7 @@
   "contributors": [],
   "dependencies": {
     "async": "",
+    "body-parser": "^1.16.0",
     "colors": "^1.1.2",
     "express": "^4.14.0",
     "mysql": "^2.12.0",

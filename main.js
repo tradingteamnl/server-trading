@@ -1,15 +1,20 @@
 //load modules
 var express = require('express');
+var fs = require('fs');
 
 //app
 var app = express();
 
-//laat requires
-require('./bittrex/bittrexMarketRequest.js');
+//laat console color
 var ConsoleColor = require('./ConsoleColor.js');
 
+//laat requires
+//require('./bittrex/bittrexMarketRequest.js');
+
+//routers
+app.use('/api', require('./router/index.js'));
 
 //great server
-app.listen(8090, function(){
+app.listen(8080, function(){
     console.log(ConsoleColor.log()+"Server is aan.");
 });
