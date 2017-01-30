@@ -6,6 +6,9 @@
             <file>file:/Users/michel/Desktop/server%20trading/bittrex/bittrexMarketRequest.js</file>
             <file>file:/Users/michel/Desktop/server%20trading/poloniex/poloniexMarketRequest.js</file>
         </group>
-        <group name="trading"/>
+        <group name="trading">
+            <file>file:/Users/michel/Desktop/servertrading/core/analyze.js</file>
+            <file>file:/Users/michel/Desktop/servertrading/router/updateBalance.js</file>
+        </group>
     </open-files>
 </project-private>
