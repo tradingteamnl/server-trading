@@ -4,5 +4,12 @@
         "user": "root",
         "password": "Pulsar11",
         "DBName": "cryptoData"
+    },
+    
+    "mysqlDeveloperDatabase": {
+        "host": "localhost",
+        "user": "root",
+        "password": "Pulsar11",
+        "DBName": "cryptoData_2.0"
     }
 }

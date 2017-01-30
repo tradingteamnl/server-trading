@@ -2,12 +2,12 @@
 var fs = require('fs');
 
 //laat autoconfig
-var autoConfig = JSON.parse(fs.readFileSync("./autoConfig.json"));
+var autoConfig = JSON.parse(fs.readFileSync("./config/fileLocation.txt"));
 
 //laat config
 var config = JSON.parse(fs.readFileSync("./config.json"));
 
-//get filelocation
+/* ================== FILELOCATION ================== */
 exports.fileLocation = function(){
     return autoConfig.fileLocation;
 };
@@ -31,4 +31,24 @@ exports.mysqlPassword = function(){
 /* ============== MYSQL DBNAME ============== */
 exports.mysqlDBName = function(){
     return config.mysql.DBName;
+};
+
+/* ======= MYSQL DEVELOPER DATABSE ======= */
+exports.mysqlDeveloperDatabaseHost = function(){
+    return config.mysqlDeveloperDatabase.host;
+};
+
+/* ============== MYSQL USER ============== */
+exports.mysqlDeveloperDatabaseUser = function(){
+    return config.mysqlDeveloperDatabase.user;
+};
+
+/* ============== MYSQL PASSWORD ============== */
+exports.mysqlDeveloperDatabasePassword = function(){
+    return config.mysqlDeveloperDatabase.password;
+};
+
+/* ============== MYSQL DBNAME ============== */
+exports.mysqlDeveloperDatabaseDBName = function(){
+    return config.mysqlDeveloperDatabase.DBName;
 };
