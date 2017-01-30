@@ -7,6 +7,20 @@ var autoConfig = JSON.parse(fs.readFileSync("./config/fileLocation.txt"));
 //laat config
 var config = JSON.parse(fs.readFileSync("./config.json"));
 
+//loaat andere bestanden
+var dag = require(fileLoaction+'/scripts/Dag.js');
+var tijd = require(fileLoaction+'/scipts/Tijd.js');
+
+/* ====================== DAG ======================  */
+exports.dag = function(){
+    return dag.dag;
+};
+
+/* ====================== TIJD ======================  */
+exports.tijd = function (){
+    return tijd.tijd;
+}
+
 /* ================== FILELOCATION ================== */
 exports.fileLocation = function(){
     return autoConfig.fileLocation;
