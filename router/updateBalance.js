@@ -3,7 +3,7 @@ var mysql = require('mysql');
 var fs = require('fs');
 
 //laat config bestanden
-var fileLoaction = JSON.parse(fs.readFileSync('./config/fileLoaction.txt'));
+var fileLoaction = JSON.parse(fs.readFileSync('./config/fileLocation.txt'));
 var config = JSON.parse(fs.readFileSync('./config.json'));
 
 //load codes
