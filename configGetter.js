@@ -10,7 +10,7 @@ var config = JSON.parse(fs.readFileSync("./config.json"));
 
 //loaat andere bestanden
 var dag = require(fileLocation+'/scripts/Dag.js');
-var tijd = require(fileLocation+'/scipts/Tijd.js');
+var tijd = require(fileLocation+'/scripts/Tijd.js');
 
 /* ====================== DAG ======================  */
 exports.dag = function(){
