@@ -3,6 +3,7 @@ var fs = require('fs');
 
 //laat autoconfig
 var autoConfig = JSON.parse(fs.readFileSync("./config/fileLocation.txt"));
+var fileLocation = autoConfig.fileLocation;
 
 //laat config
 var config = JSON.parse(fs.readFileSync("./config.json"));
