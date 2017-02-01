@@ -20,8 +20,13 @@ function dag(){
 
 module.exports = {
     
-    //dag
+    //datum
     dag: function(){
+        return dag();
+    },
+    
+    //datum
+    datum: function(){
         return dag();
     }
 };
