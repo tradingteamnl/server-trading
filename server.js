@@ -10,6 +10,7 @@ var ConsoleColor = require('./ConsoleColor.js');
 
 //laat requires
 //require('./bittrex/bittrexMarketRequest.js');
+require('./core/berekenGemiddelde.js');
 
 //routers
 app.use('/api', require('./router/index.js'));
