@@ -6,11 +6,17 @@ var autoConfig = JSON.parse(fs.readFileSync("./config/fileLocation.txt"));
 var fileLocation = autoConfig.fileLocation;
 
 //laat config
-var config = JSON.parse(fs.readFileSync("./config.json"));
+var config = JSON.parse(fs.readFileSync(fileLocation+"/config.json"));
 
 //loaat andere bestanden
 var dag = require(fileLocation+'/scripts/Dag.js');
 var tijd = require(fileLocation+'/scripts/Tijd.js');
+
+/* ================= GET API URL ===================  */
+//Coinbase url
+exports.coinbaseURLv2 = function(){
+    return config.requestURL.coinbase.v2
+}
 
 /* ====================== DAG ======================  */
 exports.dag = function(){

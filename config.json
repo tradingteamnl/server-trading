@@ -1,4 +1,11 @@
-{
+{   
+    "requestURL": {
+        "coinbase": {
+            "v2": "https://api.coinbase.com/v2/"
+        }
+    },
+    
+    
     "mysql": {
         "host": "localhost",
         "user": "root",
