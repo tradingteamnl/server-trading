@@ -18,5 +18,7 @@
         "user": "root",
         "password": "Pulsar11",
         "DBName": "cryptoData_2.0"
-    }
+    },
+    
+    "developerModes": true
 }

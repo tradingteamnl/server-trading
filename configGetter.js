@@ -1,9 +1,8 @@
 //load modules
 var fs = require('fs');
 
-//laat autoconfig
-var autoConfig = JSON.parse(fs.readFileSync("./config/fileLocation.txt"));
-var fileLocation = autoConfig.fileLocation;
+//krijg de fileLocation
+var fileLocation = JSON.parse(fs.readFileSync("./config/fileLocation.txt")).fileLocation;
 
 //laat config
 var config = JSON.parse(fs.readFileSync(fileLocation+"/config.json"));
@@ -15,8 +14,8 @@ var tijd = require(fileLocation+'/scripts/Tijd.js');
 /* ================= GET API URL ===================  */
 //Coinbase url
 exports.coinbaseURLv2 = function(){
-    return config.requestURL.coinbase.v2
-}
+    return config.requestURL.coinbase.v2;
+};
 
 /* ====================== DAG ======================  */
 exports.dag = function(){
@@ -72,4 +71,33 @@ exports.mysqlDeveloperDatabasePassword = function(){
 /* ============== MYSQL DBNAME ============== */
 exports.mysqlDeveloperDatabaseDBName = function(){
     return config.mysqlDeveloperDatabase.DBName;
+};
+
+/* ============== MYSQL COLLECT ============== */
+exports.MysqlCreatConnection = function(){
+    
+    //kijk in welekle modes is geactiveerd
+    if(config.developerModes == true) {
+        
+        //verzamel data
+        var createConnectionMysql = mysql.createConnection({
+            host     : config.mysqlDeveloperDatabase.host,
+            user     : config.mysqlDeveloperDatabase.user,
+            password : config.mysqlDeveloperDatabase.password,
+            database : config.mysqlDeveloperDatabase.DBName
+        });
+        
+        return createConnectionMysql;
+    } else {
+        
+        //verzamel data
+        var createConnectionMysql = mysql.createConnection({
+            host     : config.mysql.host,
+            user     : config.mysql.user,
+            password : config.mysql.password,
+            database : config.mysql.DBName
+        });
+        
+        return createConnectionMysql;
+    }
 };
