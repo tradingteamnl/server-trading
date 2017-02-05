@@ -80,23 +80,23 @@ exports.MysqlCreatConnection = function(){
     if(config.developerModes == true) {
         
         //verzamel data
-        var createConnectionMysql = mysql.createConnection({
+        var createConnectionMysql = {
             host     : config.mysqlDeveloperDatabase.host,
             user     : config.mysqlDeveloperDatabase.user,
             password : config.mysqlDeveloperDatabase.password,
             database : config.mysqlDeveloperDatabase.DBName
-        });
+        };
         
         return createConnectionMysql;
     } else {
         
         //verzamel data
-        var createConnectionMysql = mysql.createConnection({
+        var createConnectionMysql = {
             host     : config.mysql.host,
             user     : config.mysql.user,
             password : config.mysql.password,
             database : config.mysql.DBName
-        });
+        };
         
         return createConnectionMysql;
     }
