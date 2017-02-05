@@ -3,12 +3,17 @@ var request = require('request');
 var fs = require('fs');
 var mysql = require('mysql');
 
+//bestand locatie op de pc
+var autoConfig = JSON.parse(fs.readFileSync('./config/fileLocation.txt'));
+var fileLocation = autoConfig.fileLocation;
+
 //load require
-var ConsoleColor = require('../ConsoleColor.js');
-var Time = require('../Time.js');
+var configGetter = require(fileLocation+'/configGetter.js');
+var ConsoleColor = require(fileLocation+'/ConsoleColor.js');
+var Time = require(fileLocation+'/Time.js');
 
 //config
-var config = JSON.parse(fs.readFileSync("./config.json"));
+var config = JSON.parse(fs.readFileSync(fileLocation+"/config.json"));
 
 //connection
 var MYSQLConnection = mysql.createConnection({
@@ -51,38 +56,36 @@ function callback(error, response,body) {
             //trade market
             var tradeMarket = marktData[i].MarketName;
 
-            //if loop
-            if(tradeMarket.substring(0,4) == "BTC-"){
+            //bereken btc handels volume
+            var btcHandelsVolume = marktData[i].Volume * marktData[i].low;
 
-                //get cointags
-                var coinTag = tradeMarket.substring(4);
+            //get alle data
+            var data = {
+                'Markt': tradeMarket,
+                'High': marktData[i].High,
+                'Low': marktData[i].Low,
+                'Volume': marktData[i].Volume,
+                'VolumeBTC': btcHandelsVolume,
+                'Bid': marktData[i].Bid,
+                'Ask': marktData[i].Ask,
+                'OpenBuyOrders': marktData[i].OpenBuyOrders,
+                'OpenSellOrders': marktData[i].OpenSellOrders
+            };
 
-                //get alle data
-                var data = {
-                    'Markt': tradeMarket,
-                    'High': marktData[i].High,
-                    'Low': marktData[i].Low,
-                    'Volume': marktData[i].Volume,
-                    'Bid': marktData[i].Bid,
-                    'Ask': marktData[i].Ask,
-                    'OpenBuyOrders': marktData[i].OpenBuyOrders,
-                    'OpenSellOrders': marktData[i].OpenSellOrders
-                };
+            //INSERT INFO QUARY
+            var INSERTINFOQuary = "INSERT INTO `cryptoData`.`bittrexmarktdata` (`Markt`, `High`, `Low`, `Volume`, `Bid`, `Ask`, `OpenBuyOrders`, `OpenSellOrders`, `Datum`, `Time`, `VolumeBTC`)"
+                + "VALUES ('" + data.Markt + "','" + data.High + "', '" + data.Low + "', '" + data.Volume 
+                + "', '" + data.Bid + "', '" + data.Ask +  "', '" +data.OpenBuyOrders + "', '" + data.OpenSellOrders + "', '"+Time.dag()+"', '"+Time.time()+"', '"+data.VolumeBTC+"')";
 
-                var INSERTINFOQuary = "INSERT INTO `cryptoData`.`bittrexmarktdata` (`Markt`, `High`, `Low`, `Volume`, `Bid`, `Ask`, `OpenBuyOrders`, `OpenSellOrders`, `Datum`, `Time`)"
-                    + "VALUES ('" + data.Markt + "','" + data.High + "', '" + data.Low + "', '" + data.Volume 
-                    + "', '" + data.Bid + "', '" + data.Ask +  "', '" +data.OpenBuyOrders + "', '" + data.OpenSellOrders + "', '"+Time.dag()+"', '"+Time.time()+"')";
-                
-                
-                MYSQLConnection.query(INSERTINFOQuary, function (err, result) {
-                    if (err) {
-                        console.log(err);
-                        console.error(ConsoleColor.error()+"Probleem bij data naar bittrexmarktdata te pushen.");
-                    } else {
-                        console.log(ConsoleColor.log()+"Data in bittrex gezet.");
-                    }
-                });   
-            }
+            //query
+            MYSQLConnection.query(INSERTINFOQuary, function (err) {
+                if (err) {
+                    console.log(err);
+                    console.error(ConsoleColor.error()+"Probleem bij data naar bittrexmarktdata te pushen.");
+                } else {
+                    console.log(ConsoleColor.log()+"Data in bittrex gezet.");
+                }
+            });
         }
     }
 }
