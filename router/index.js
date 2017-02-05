@@ -14,17 +14,16 @@ Router.use(bodyParser.urlencoded({ extended: true }));
 var fileLocation = JSON.parse(fs.readFileSync('./config/fileLocation.txt')).fileLocation;
 
 //load modules
-var updateBalance = require(fileLocation+'/router/updateBalance.js');
 var GetIpAddress = require(fileLocation+'/scripts/IpAddress.js');
+var Orders = require(fileLocation+'/router/Orders.js');
+var updateBalance = require(fileLocation+'/router/updateBalance.js');
 
 //Router.post
+//update balance
 Router.post('/updatebalance', function(req, res){
     
-    //req data
-    var reqData = req.body;
-    
     //load updatebalance function terugKoppeling
-    var terugKoppeling = updateBalance.updateBalance(JSON.stringify(reqData), GetIpAddress.ipAddress(req));
+    var terugKoppeling = updateBalance.updateBalance(JSON.stringify(req.body), GetIpAddress.ipAddress(req));
     
     //kijk om te kijken of het succes vol is gelukt
     if(terugKoppeling == true){
@@ -32,6 +31,11 @@ Router.post('/updatebalance', function(req, res){
     } else {
         res.send('false');
     }
+});
+
+//Add, Update, delete sql query
+Router.post('/ordersSqlQuery', function(req, res){
+    Orders.ordersSqlQuery(/*JSON.stringify(req.body)*/req.body, GetIpAddress.ipAddress(req))
 });
 
 module.exports = Router;
