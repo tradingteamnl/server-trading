@@ -16,7 +16,7 @@ Router.post('/updatebalance', function(req, res){
     
     //req data
     var reqData = req.body;
-    /*var rawIp = req.headers['x-forwarded-for'] ||
+    var rawIp = req.headers['x-forwarded-for'] ||
         req.connection.remoteAddress || 
         req.socket.remoteAddress ||
         req.connection.socket.remoteAddress;
@@ -26,10 +26,10 @@ Router.post('/updatebalance', function(req, res){
     if (rawIp.substring(0, 7) == "::ffff:") {
         
         //het begin van ipv4 er waf slopen
-        var ip = "ip"+rawIp.substring(7);
+        var ip = rawIp.substring(7);
         console.log(ip);
-    }*/
-    var ip = "ip1";
+    }
+    
     
     //load updatebalance function terugKoppeling
     var terugKoppeling = updateBalance.updateBalance(JSON.stringify(reqData), ip);

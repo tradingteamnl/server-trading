@@ -30,10 +30,10 @@ MYSQLConnection.connect(function(err){
 exports.updateBalance = function(reqData, ip){
     
     //kijk of balance tabel van het ip adres al bestaat
-    MYSQLConnection.query("SHOW TABLES LIKE '"+ip+"';", function (err, resulttwo) {
+    MYSQLConnection.query("SHOW TABLES LIKE 'balance';", function (err, resulttwo) {
         if (err) {
             console.error(ConsoleColor.error()+"Probleem bij kijken welk ip's tabels als die er zijn. Het is bij updateBalance.js de error.");
-            
+            return false;
         } else {
             console.log(ConsoleColor.log()+"Tabel check is uitgevoerd.");
             
@@ -70,7 +70,8 @@ function dataVerwerkenBittrex(ip, reqData){
             balance: raw_data.balance,
             available: raw_data.available,
             pending: raw_data.pending,
-            exchange: 'bittrex'
+            exchange: 'bittrex',
+            ip: ip
         };
         
         bittrexMysql(ip, data);
@@ -83,12 +84,14 @@ function dataVerwerkenBittrex(ip, reqData){
 function bittrexMysql (ip, data){
     
     //count sql zodat je weet of je data moet update of toevoegen
-    var countSql = "SELECT count(*) AS count FROM `cryptoData`.`"+ip+"` WHERE  coin='"+data.coin+"'";
-    
+    var countSql = "SELECT count(*) AS count FROM `cryptoData`.`balance`"
+            +" WHERE  coin='"+data.coin+"' AND handelsplaats='"+ data.exchange+"' AND ip='"+data.ip+"'";
+   
     //voer query uit
     MYSQLConnection.query(countSql, function (err, result) {
         if (err) {
             console.error(ConsoleColor.error()+"Probleem bij data optellen. Het probleem is bij updateBalance.");
+            return false;
         } else {
             console.log(ConsoleColor.log()+"Count query is gedaan.");
             
@@ -96,29 +99,33 @@ function bittrexMysql (ip, data){
             if(result[0].count > 0){
                 
                 //sql
-                var sql = "UPDATE "+ip+" SET balance="+data.balance+", pending="+data.pending+", available="+data.available + 
-                        " WHERE coin='"+data.coin +"' AND handelsplaats='"+ data.exchange+"'";
+                var sql = "UPDATE balance SET balance="+data.balance+", pending="+data.pending+", available="+data.available + 
+                        " WHERE coin='"+data.coin +"' AND handelsplaats='"+ data.exchange+"' AND ip='"+data.ip+"'";
 
                 //voor de query uit
                 MYSQLConnection.query(sql, function (err) {
                     if (err) {
                         console.error(ConsoleColor.error()+"Probleem bij updaten balance. Dit is bij udpateBalance.js.");
+                        return false;
                     } else {
                         console.log(ConsoleColor.log()+"Balence geupdate.");
-
+                        return true;
                     }
                 });
             } else {
                 
                 //sql
-                var sql = "INSERT INTO "+ip+" (handelsplaats, coin, balance, available, pending) "+
-                        "VALUES ('"+data.exchange+"', '"+data.coin+"', "+data.balance+", "+data.available+", "+data.pending+");";
+                var sql = "INSERT INTO balance (handelsplaats, coin, balance, available, pending, ip) "+
+                        "VALUES ('"+data.exchange+"', '"+data.coin+"', "+data.balance+", "+data.available+", "+data.pending+", '"+data.ip+"');";
+                
                 //voor de query uit
                 MYSQLConnection.query(sql, function (err) {
                     if (err) {
                         console.error(ConsoleColor.error()+"Probleem bij data toevoegen bij balance tabel. Dit is bij updateBalance.js.");
+                        return false;
                     } else {
                         console.log(ConsoleColor.log()+"Data is geupdate.");
+                        return true;
 
                     }
                 });
@@ -135,19 +142,21 @@ function bittrexMysql (ip, data){
 function mysqlCreatTabel(ip, reqData){
     
     //sql
-    var sql = "CREATE TABLE `cryptoData`.`"+ip+"` ("
+    var sql = "CREATE TABLE `cryptoData`.`balance` ("
         +"`handelsplaats` VARCHAR(45) NOT NULL,"
         +"`coin` VARCHAR(45) NOT NULL,"
         +"`balance` INT NOT NULL,"
         +"`available` INT NOT NULL,"
         +"`pending` INT NOT NULL,"
-        +"PRIMARY KEY (`handelsplaats`, `coin`));";
+        +"`ip` VARCHAR(45) NOT NULL,"
+        +"PRIMARY KEY (`handelsplaats`, `coin`, `ip`));";
     
     //voor de query uit
     MYSQLConnection.query(sql, function (err, resulttwo) {
         if (err) {
             console.error(err);
             console.error(ConsoleColor.error()+"Probleem bij data toe tevoegen bij balance tabel. Dit probleem is bij updateBalance.js.");
+            return false;
         } else {
             console.log(ConsoleColor.log()+"Tabel is toegevoegd.");
             dataVerwerkenBittrex(ip, reqData);
