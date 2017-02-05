@@ -18,35 +18,35 @@ function date(){
     var date = new Date();
     
     //maand
-    if (date.getMonth() < 9){
+    if (date.getMonth() < 10){
         var maand = ""+date.getMonth()+1;
     } else {
         var maand = (date.getMonth())+11;
     }
     
     //dag
-    if (date.getDate() < 9){
+    if (date.getDate() < 10){
         var dag = "0"+date.getDate();
     } else {
         var dag = date.getDate();
     }
     
     //uur
-    if (date.getHours()  < 9){
+    if (date.getHours()  < 10){
         var uur = "0"+date.getHours();
     } else {
         var uur = date.getHours();
     }
     
     //minut
-    if (date.getMinutes()  < 9){
+    if (date.getMinutes()  < 10){
         var minut = "0"+date.getMinutes();
     } else {
         var minut = date.getMinutes();
     }
     
     //sec
-    if (date.getSeconds()  < 9){
+    if (date.getSeconds()  < 10){
         var sec = "0"+date.getSeconds();
     } else {
         var sec = date.getSeconds();

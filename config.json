@@ -17,7 +17,7 @@
         "host": "localhost",
         "user": "root",
         "password": "Pulsar11",
-        "DBName": "cryptoData_2.0"
+        "DBName": "cryptoData"
     },
     
     "developerModes": true
