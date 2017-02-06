@@ -35,7 +35,9 @@ Router.post('/updatebalance', function(req, res){
 
 //Add, Update, delete sql query
 Router.post('/ordersSqlQuery', function(req, res){
-    Orders.ordersSqlQuery(/*JSON.stringify(req.body)*/req.body, GetIpAddress.ipAddress(req))
+    console.log(req.body)
+    Orders.ordersSqlQuery(JSON.stringify(req.body), GetIpAddress.ipAddress(req))
+    res.send("fasd")
 });
 
 module.exports = Router;
