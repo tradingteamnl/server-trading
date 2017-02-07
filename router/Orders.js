@@ -1,4 +1,5 @@
 //load modules
+var express = require('express');
 var mysql = require('mysql');
 var fs = require('fs');
 
@@ -8,6 +9,11 @@ var fileLocation = JSON.parse(fs.readFileSync('./config/fileLocation.txt')).file
 //load codes
 var ConsoleColor = require(fileLocation+'/ConsoleColor.js');
 var ConfigGetter = require(fileLocation+'/configGetter.js');
+var GetIpAddress = require(fileLocation+'/scripts/IpAddress.js');
+
+//Router
+var Router = express.Router();
+
 
 //connection
 var MYSQLConnection =  mysql.createConnection(ConfigGetter.MysqlCreatConnection());
@@ -22,12 +28,14 @@ MYSQLConnection.connect(function(err){
 });
 
 //function
-exports.ordersSqlQuery = function(reqData, ip){
+Router.post('/', function(req, res){
     
     //verwerk alle data van het inkomende verkeer
-    var tempData = JSON.parse(reqData);
+    var ip = GetIpAddress.ipAddress(req);
+    var tempData = JSON.parse(req.body);
     var settingOrdersBittrex = JSON.parse(tempData[0]).bittrex;
     var settingOrdersPoloniex = JSON.parse(tempData[0]).poloniex;
+    
     
     //var sql
     var sqlQuery = "SELECT * FROM orderLimiet";
@@ -55,11 +63,11 @@ exports.ordersSqlQuery = function(reqData, ip){
     };
     
     if(sqlQuery != finalSqlQuery){
-        console.log(sqlRequestv);
+        console.log(sqlRequest());
     }
     
-    exports.sqlRequestv= function sqlRequestv(){
-        var lol = MYSQLConnection.query(sqlQuery, function (error, results, fields) {
+    function sqlRequest(){
+        MYSQLConnection.query(sqlQuery, function (error, results, fields, res) {
             // error will be an Error if one occurred during the query 
             // results will contain the results of the query 
             // fields will contain information about the returned results fields (if any) 
@@ -67,19 +75,19 @@ exports.ordersSqlQuery = function(reqData, ip){
                 console.log(error);
             } else {
                 console.log("results "+JSON.stringify(results));
-                return results[0];
+                res.send("lolololol");
             }
         });
-        
-        console.log(lol);  
     };
     console.log(sqlRequest(sqlQuery));
-};
+});
 
 exports.ordersGetList = function(sql, ip) {
     
     
     
 };
+
+module.exports = Router;
 
 console.log(ConsoleColor.log()+"Orders.js is beschikbaar.");

@@ -3,6 +3,8 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var fs = require('fs');
 
+var app = express();
+
 //router
 var Router = express.Router();
 
@@ -33,11 +35,8 @@ Router.post('/updatebalance', function(req, res){
     }
 });
 
-//Add, Update, delete sql query
-Router.post('/ordersSqlQuery', function(req, res){
-    console.log(req.body)
-    Orders.ordersSqlQuery(JSON.stringify(req.body), GetIpAddress.ipAddress(req))
-    res.send("fasd")
-});
+//app.use
+app.use('/updatebalance', require(fileLocation+'/router/Orders.js'));
+app.use('/ordersSqlQuery', require(fileLocation+'/router/updateBalance.js'));
 
-module.exports = Router;
+module.exports = app;
