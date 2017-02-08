@@ -1,14 +1,18 @@
 //load modules
-var Router = require('express').Router();
+var express = require('express');
 var mysql = require('mysql');
 var fs = require('fs');
 
+
+var Router = express.Router();
+
 //laat config bestanden
-var fileLoaction = JSON.parse(fs.readFileSync('./config/fileLocation.txt'));
+var fileLocation = JSON.parse(fs.readFileSync('./config/fileLocation.txt')).fileLocation;
 var config = JSON.parse(fs.readFileSync('./config.json'));
 
 //load codes
-var ConsoleColor = require(fileLoaction.file+'/ConsoleColor.js');
+var ConsoleColor = require(fileLocation+'/ConsoleColor.js');
+var GetIpAddress = require(fileLocation+'/scripts/IpAddress.js');
 
 //connection
 var MYSQLConnection = mysql.createConnection({
@@ -30,6 +34,18 @@ MYSQLConnection.connect(function(err){
 //function
 Router.post('/', function(req, res){
     
+    //get ips
+    var ip = GetIpAddress.ipAddress(req);
+    console.log(req.body)
+})
+
+//function
+Router.post('/test', function(req, res){
+    
+    //get ips
+    var ip = GetIpAddress.ipAddress(req);
+    console.log(req.body)
+   
     //kijk of balance tabel van het ip adres al bestaat
     MYSQLConnection.query("SHOW TABLES LIKE 'balance';", function (err, resulttwo) {
         if (err) {
@@ -37,23 +53,28 @@ Router.post('/', function(req, res){
             return false;
         } else {
             console.log(ConsoleColor.log()+"Tabel check is uitgevoerd.");
-            
+    
+            //req data
+            var reqData = req.body;
+            console.log(reqData)
             //kijk naar de gekijken data
             if(resulttwo.length == 0){
                 //maak tabel aan
-                mysqlCreatTabel(ip, reqData);
+                mysqlCreatTabel(reqData);
             } else {
                 //start data verwerker
-                dataVerwerkenBittrex(ip, reqData);
+                console.log(reqData)
+                dataVerwerkenBittrex(reqData);
             }
         }
     });
     
     //data verwerken bittre
-    function dataVerwerkenBittrex(ip, reqData){
+    function dataVerwerkenBittrex(reqData){
 
         //for loop
         var tempData = JSON.parse(reqData);
+        console.log(reqData)
         var i = 0;
         for (;tempData[i];) {
 
@@ -68,13 +89,13 @@ Router.post('/', function(req, res){
                 ip: ip
             };
 
-            bittrexMysql(ip, data);
+            bittrexMysql(data);
             i++;
         }
     };
     
     //bitrtrex mysql function
-    function bittrexMysql (ip, data){
+    function bittrexMysql (data){
     
         //count sql zodat je weet of je data moet update of toevoegen
         var countSql = "SELECT count(*) AS count FROM `cryptoData`.`balance`"
@@ -128,7 +149,7 @@ Router.post('/', function(req, res){
     }
     
     //creat tabel als die nog niet bestaat
-    function mysqlCreatTabel(ip, reqData){
+    function mysqlCreatTabel(reqData){
     
         //sql
         var sql = "CREATE TABLE `cryptoData`.`balance` ("
