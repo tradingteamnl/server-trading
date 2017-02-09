@@ -16,12 +16,7 @@ var Time = require(fileLocation+'/Time.js');
 var config = JSON.parse(fs.readFileSync(fileLocation+"/config.json"));
 
 //connection
-var MYSQLConnection = mysql.createConnection({
-  host     : config.mysql.host,
-  user     : config.mysql.user,
-  password : config.mysql.password,
-  database : config.mysql.DBName
-});
+var MYSQLConnection = mysql.createConnection(configGetter.MysqlCreatConnection());
 
 //options
 var options = {

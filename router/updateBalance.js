@@ -3,7 +3,7 @@ var express = require('express');
 var mysql = require('mysql');
 var fs = require('fs');
 
-
+//Router
 var Router = express.Router();
 
 //laat config bestanden
@@ -15,12 +15,7 @@ var ConsoleColor = require(fileLocation+'/ConsoleColor.js');
 var GetIpAddress = require(fileLocation+'/scripts/IpAddress.js');
 
 //connection
-var MYSQLConnection = mysql.createConnection({
-    host     : config.mysql.host,
-    user     : config.mysql.user,
-    password : config.mysql.password,
-    database : config.mysql.DBName
-});
+var MYSQLConnection = mysql.createConnection(configGetter.MysqlCreatConnection());
 
 //connectie maken met mysql
 MYSQLConnection.connect(function(err){
@@ -31,20 +26,13 @@ MYSQLConnection.connect(function(err){
     }
 });
 
-//function
-Router.post('/', function(req, res){
-    
-    //get ips
-    var ip = GetIpAddress.ipAddress(req);
-    console.log(req.body)
-})
 
 //function
-Router.post('/test', function(req, res){
+Router.post('/updatebalance', function(req, res){
     
     //get ips
     var ip = GetIpAddress.ipAddress(req);
-    console.log(req.body)
+    console.log(ip);
    
     //kijk of balance tabel van het ip adres al bestaat
     MYSQLConnection.query("SHOW TABLES LIKE 'balance';", function (err, resulttwo) {
@@ -56,14 +44,13 @@ Router.post('/test', function(req, res){
     
             //req data
             var reqData = req.body;
-            console.log(reqData)
+            
             //kijk naar de gekijken data
             if(resulttwo.length == 0){
                 //maak tabel aan
                 mysqlCreatTabel(reqData);
             } else {
                 //start data verwerker
-                console.log(reqData)
                 dataVerwerkenBittrex(reqData);
             }
         }
@@ -73,8 +60,9 @@ Router.post('/test', function(req, res){
     function dataVerwerkenBittrex(reqData){
 
         //for loop
-        var tempData = JSON.parse(reqData);
-        console.log(reqData)
+        //var tempData = JSON.parse(reqData);
+        var tempData = reqData;
+        //console.log(reqData)
         var i = 0;
         for (;tempData[i];) {
 
