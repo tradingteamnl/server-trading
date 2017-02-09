@@ -8,11 +8,11 @@ var Router = express.Router();
 
 //laat config bestanden
 var fileLocation = JSON.parse(fs.readFileSync('./config/fileLocation.txt')).fileLocation;
-var config = JSON.parse(fs.readFileSync('./config.json'));
 
 //load codes
 var ConsoleColor = require(fileLocation+'/ConsoleColor.js');
 var GetIpAddress = require(fileLocation+'/scripts/IpAddress.js');
+var configGetter = require(fileLocation+'/configGetter.js');
 
 //connection
 var MYSQLConnection = mysql.createConnection(configGetter.MysqlCreatConnection());
@@ -28,17 +28,15 @@ MYSQLConnection.connect(function(err){
 
 
 //function
-Router.post('/updatebalance', function(req, res){
+Router.post('/', function(req, res){
     
     //get ips
     var ip = GetIpAddress.ipAddress(req);
-    console.log(ip);
    
     //kijk of balance tabel van het ip adres al bestaat
     MYSQLConnection.query("SHOW TABLES LIKE 'balance';", function (err, resulttwo) {
         if (err) {
             console.error(ConsoleColor.error()+"Probleem bij kijken welk ip's tabels als die er zijn. Het is bij updateBalance.js de error.");
-            return false;
         } else {
             console.log(ConsoleColor.log()+"Tabel check is uitgevoerd.");
     
@@ -61,7 +59,9 @@ Router.post('/updatebalance', function(req, res){
 
         //for loop
         //var tempData = JSON.parse(reqData);
-        var tempData = reqData;
+        var tempData = reqData.balanceData;
+        var mac = reqData.mac;
+        
         //console.log(reqData)
         var i = 0;
         for (;tempData[i];) {
@@ -74,7 +74,8 @@ Router.post('/updatebalance', function(req, res){
                 available: raw_data.available,
                 pending: raw_data.pending,
                 exchange: 'bittrex',
-                ip: ip
+                ip: ip,
+                macadres: mac
             };
 
             bittrexMysql(data);
@@ -87,7 +88,7 @@ Router.post('/updatebalance', function(req, res){
     
         //count sql zodat je weet of je data moet update of toevoegen
         var countSql = "SELECT count(*) AS count FROM `cryptoData`.`balance`"
-                +" WHERE  coin='"+data.coin+"' AND handelsplaats='"+ data.exchange+"' AND ip='"+data.ip+"'";
+                +" WHERE  coin='"+data.coin+"' AND handelsplaats='"+ data.exchange+"' AND ip='"+data.ip+"' AND macadres='"+data.macadres+"';";
 
         //voer query uit
         MYSQLConnection.query(countSql, function (err, result) {
@@ -102,7 +103,7 @@ Router.post('/updatebalance', function(req, res){
 
                     //sql
                     var sql = "UPDATE balance SET balance="+data.balance+", pending="+data.pending+", available="+data.available + 
-                            " WHERE coin='"+data.coin +"' AND handelsplaats='"+ data.exchange+"' AND ip='"+data.ip+"'";
+                            " WHERE coin='"+data.coin +"' AND handelsplaats='"+ data.exchange+"' AND ip='"+data.ip+"' AND macadres='"+data.macadres+"'";
 
                     //voor de query uit
                     MYSQLConnection.query(sql, function (err) {
@@ -117,18 +118,15 @@ Router.post('/updatebalance', function(req, res){
                 } else {
 
                     //sql
-                    var sql = "INSERT INTO balance (handelsplaats, coin, balance, available, pending, ip) "+
-                            "VALUES ('"+data.exchange+"', '"+data.coin+"', "+data.balance+", "+data.available+", "+data.pending+", '"+data.ip+"');";
+                    var sql = "INSERT INTO balance (handelsplaats, coin, balance, available, pending, ip, macadres) "+
+                            "VALUES ('"+data.exchange+"', '"+data.coin+"', "+data.balance+", "+data.available+", "+data.pending+", '"+data.ip+"', '"+data.macadres+"');";
 
                     //voor de query uit
                     MYSQLConnection.query(sql, function (err) {
                         if (err) {
                             console.error(ConsoleColor.error()+"Probleem bij data toevoegen bij balance tabel. Dit is bij updateBalance.js.");
-                            return false;
                         } else {
                             console.log(ConsoleColor.log()+"Data is geupdate.");
-                            return true;
-
                         }
                     });
                 }
@@ -147,7 +145,8 @@ Router.post('/updatebalance', function(req, res){
             +"`available` INT NOT NULL,"
             +"`pending` INT NOT NULL,"
             +"`ip` VARCHAR(45) NOT NULL,"
-            +"PRIMARY KEY (`handelsplaats`, `coin`, `ip`));";
+            +"`mac` VARCHAR(45) NOT NULL,"
+            +"PRIMARY KEY (`handelsplaats`, `coin`, `ip`, `mac`));";
 
         //voor de query uit
         MYSQLConnection.query(sql, function (err, resulttwo) {

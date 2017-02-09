@@ -18,8 +18,6 @@ var fileLocation = JSON.parse(fs.readFileSync('./config/fileLocation.txt')).file
 
 //load modules
 var GetIpAddress = require(fileLocation+'/scripts/IpAddress.js');
-var Orders = require(fileLocation+'/router/Orders.js');
-var updateBalance = require(fileLocation+'/router/updateBalance.js');
 var ConsoleColor = require(fileLocation+'/ConsoleColor.js');
 
 //laat config
@@ -43,143 +41,27 @@ MYSQLConnection.connect(function(err){
 });
 
 //function
-Router.post('/updatebalance', function(req, res){
+Router.post('/', function(req, res){
     
-    //get ips
+    //vraag data op
+    console.log(req.body);
+    
+    //Maak een sql string
     var ip = GetIpAddress.ipAddress(req);
-    console.log(req.body)
-   
-    //kijk of balance tabel van het ip adres al bestaat
-    MYSQLConnection.query("SHOW TABLES LIKE 'balance';", function (err, resulttwo) {
-        if (err) {
-            console.error(ConsoleColor.error()+"Probleem bij kijken welk ip's tabels als die er zijn. Het is bij updateBalance.js de error.");
-            return false;
-        } else {
-            console.log(ConsoleColor.log()+"Tabel check is uitgevoerd.");
+    console.log(ip)
     
-            //req data
-            var reqData = req.body;
-            console.log(reqData)
-            //kijk naar de gekijken data
-            if(resulttwo.length == 0){
-                //maak tabel aan
-                mysqlCreatTabel(reqData);
-            } else {
-                //start data verwerker
-                console.log(reqData)
-                dataVerwerkenBittrex(reqData);
-            }
+    //voor sting uit
+    console.log("SELECT * FROM cryptoData.balance WHERE ip='"+ip+"';");
+    MYSQLConnection.query("SELECT * FROM cryptoData.balance WHERE ip='"+ip+"';", function (err, resulttwo) {
+        if (err) {
+            console.error(ConsoleColor.error()+"Probleem bij balance data op te vragen. Dit probleem is bij getBalance.js.");
+        } else {
+            res.send(resulttwo);
         }
     });
-    
-    //data verwerken bittre
-    function dataVerwerkenBittrex(reqData){
-
-        //for loop
-        //var tempData = JSON.parse(reqData);
-        var tempData = reqData;
-        //console.log(reqData)
-        var i = 0;
-        for (;tempData[i];) {
-
-            var raw_data = JSON.parse(tempData[i]);
-
-            var data = {
-                coin: raw_data.coin,
-                balance: raw_data.balance,
-                available: raw_data.available,
-                pending: raw_data.pending,
-                exchange: 'bittrex',
-                ip: ip
-            };
-
-            bittrexMysql(data);
-            i++;
-        }
-    };
-    
-    //bitrtrex mysql function
-    function bittrexMysql (data){
-    
-        //count sql zodat je weet of je data moet update of toevoegen
-        var countSql = "SELECT count(*) AS count FROM `cryptoData`.`balance`"
-                +" WHERE  coin='"+data.coin+"' AND handelsplaats='"+ data.exchange+"' AND ip='"+data.ip+"'";
-
-        //voer query uit
-        MYSQLConnection.query(countSql, function (err, result) {
-            if (err) {
-                console.error(ConsoleColor.error()+"Probleem bij data optellen. Het probleem is bij updateBalance.");
-                return false;
-            } else {
-                console.log(ConsoleColor.log()+"Count query is gedaan.");
-
-                //de juiste query runnen
-                if(result[0].count > 0){
-
-                    //sql
-                    var sql = "UPDATE balance SET balance="+data.balance+", pending="+data.pending+", available="+data.available + 
-                            " WHERE coin='"+data.coin +"' AND handelsplaats='"+ data.exchange+"' AND ip='"+data.ip+"'";
-
-                    //voor de query uit
-                    MYSQLConnection.query(sql, function (err) {
-                        if (err) {
-                            console.error(ConsoleColor.error()+"Probleem bij updaten balance. Dit is bij udpateBalance.js.");
-                            return false;
-                        } else {
-                            console.log(ConsoleColor.log()+"Balence geupdate.");
-                            return true;
-                        }
-                    });
-                } else {
-
-                    //sql
-                    var sql = "INSERT INTO balance (handelsplaats, coin, balance, available, pending, ip) "+
-                            "VALUES ('"+data.exchange+"', '"+data.coin+"', "+data.balance+", "+data.available+", "+data.pending+", '"+data.ip+"');";
-
-                    //voor de query uit
-                    MYSQLConnection.query(sql, function (err) {
-                        if (err) {
-                            console.error(ConsoleColor.error()+"Probleem bij data toevoegen bij balance tabel. Dit is bij updateBalance.js.");
-                            return false;
-                        } else {
-                            console.log(ConsoleColor.log()+"Data is geupdate.");
-                            return true;
-
-                        }
-                    });
-                }
-            }
-        });
-    }
-    
-    //creat tabel als die nog niet bestaat
-    function mysqlCreatTabel(reqData){
-    
-        //sql
-        var sql = "CREATE TABLE `cryptoData`.`balance` ("
-            +"`handelsplaats` VARCHAR(45) NOT NULL,"
-            +"`coin` VARCHAR(45) NOT NULL,"
-            +"`balance` INT NOT NULL,"
-            +"`available` INT NOT NULL,"
-            +"`pending` INT NOT NULL,"
-            +"`ip` VARCHAR(45) NOT NULL,"
-            +"PRIMARY KEY (`handelsplaats`, `coin`, `ip`));";
-
-        //voor de query uit
-        MYSQLConnection.query(sql, function (err, resulttwo) {
-            if (err) {
-                console.error(err);
-                console.error(ConsoleColor.error()+"Probleem bij data toe tevoegen bij balance tabel. Dit probleem is bij updateBalance.js.");
-                return false;
-            } else {
-                console.log(ConsoleColor.log()+"Tabel is toegevoegd.");
-                dataVerwerkenBittrex(ip, reqData);
-            }
-        })
-    };
 });
 
-
+//orderssql query
 Router.post('/ordersSqlQuery', function(req, res){
     
     //verwerk alle data van het inkomende verkeer

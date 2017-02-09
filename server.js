@@ -20,6 +20,8 @@ var fileLocation = JSON.parse(fs.readFileSync('./config/fileLocation.txt')).file
 //app.use('/api/updatebalance', require(fileLocation+'/router/updateBalance.js'));
 //app.use('/api/ordersSqlQuery', require(fileLocation+'/router/Orders.js'));
 app.use('/api', require('./router/index.js'));
+app.use('/api/updatebalance', require('./router/updateBalance.js'));
+app.use('/api/getbalance', require('./router/getBalance.js'));
 
 //great server
 app.listen(8080, function(){
