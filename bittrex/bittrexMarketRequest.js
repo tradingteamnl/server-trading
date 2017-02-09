@@ -72,20 +72,27 @@ function callback(error, response,body) {
                 'OpenSellOrders': marktData[i].OpenSellOrders
             };
 
-            //INSERT INFO QUARY
-            var INSERTINFOQuary = "INSERT INTO `cryptoData`.`bittrexmarktdata` (`Markt`, `High`, `Low`, `Volume`, `Bid`, `Ask`, `OpenBuyOrders`, `OpenSellOrders`, `Datum`, `Time`, `VolumeBTC`)"
-                + "VALUES ('" + data.Markt + "','" + data.High + "', '" + data.Low + "', '" + data.Volume 
-                + "', '" + data.Bid + "', '" + data.Ask +  "', '" +data.OpenBuyOrders + "', '" + data.OpenSellOrders + "', '"+Time.dag()+"', '"+Time.time()+"', '"+data.VolumeBTC+"')";
+            //even kijken of alle data beschikbaar is
+            if(data.High != null && data.Low != null && data.Volume != null && data.Bid != null && data.Ask != null && data.OpenBuyOrders != null && data.OpenSellOrders != null){
+                //INSERT INFO QUARY
+                var INSERTINFOQuary = "INSERT INTO `cryptoData`.`bittrexmarktdata` (`Markt`, `High`, `Low`, `Volume`, `Bid`, `Ask`, `OpenBuyOrders`, `OpenSellOrders`, `Datum`, `Time`, `VolumeBTC`)"
+                    + "VALUES ('" + data.Markt + "','" + data.High + "', '" + data.Low + "', '" + data.Volume 
+                    + "', '" + data.Bid + "', '" + data.Ask +  "', '" +data.OpenBuyOrders + "', '" + data.OpenSellOrders + "', '"+Time.dag()+"', '"+Time.time()+"', '"+data.VolumeBTC+"')";
 
-            //query
-            MYSQLConnection.query(INSERTINFOQuary, function (err) {
-                if (err) {
-                    console.log(err);
-                    console.error(ConsoleColor.error()+"Probleem bij data naar bittrexmarktdata te pushen.");
-                } else {
-                    console.log(ConsoleColor.log()+"Data in bittrex gezet.");
-                }
-            });
+                //query
+                MYSQLConnection.query(INSERTINFOQuary, function (err) {
+                    if (err) {
+                        console.log(err);
+                        console.error(ConsoleColor.error()+"Probleem bij data naar bittrexmarktdata te pushen.");
+                    } else {
+                        console.log(ConsoleColor.log()+"Data in bittrex gezet.");
+                    }
+                });
+            } else {
+                
+                //hier kan nog een error systeem komen als je wilt
+                
+            }
         }
     }
 }

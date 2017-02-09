@@ -43,3 +43,5 @@ temp
 nbproject/private/private.xml
 
 config/fileLocation.txt
+
+*.xml
