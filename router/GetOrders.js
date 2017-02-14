@@ -1,5 +1,6 @@
 //load modules
 var express = require('express');
+var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var fs = require('fs');
 
@@ -13,8 +14,8 @@ var GetIpAddress = require(fileLocation+'/scripts/IpAddress.js');
 
 //Router
 var Router = express.Router();
-
-
+Router.use(bodyParser.json());
+Router.use(bodyParser.urlencoded({ extended: true }));
 //connection
 var MYSQLConnection =  mysql.createConnection(ConfigGetter.MysqlCreatConnection());
 
@@ -32,15 +33,16 @@ Router.post('/', function(req, res){
     
     //verwerk alle data van het inkomende verkeer
     var ip = GetIpAddress.ipAddress(req);
-    var tempData = JSON.parse(req.body);
+    //var tempData = JSON.parse(req.body);
+    var tempData = req.body;
     var settingOrdersBittrex = JSON.parse(tempData[0]).bittrex;
     var settingOrdersPoloniex = JSON.parse(tempData[0]).poloniex;
     
-    
+    console.log(req.body);
     //var sql
     var sqlQuery = "SELECT * FROM orderLimiet";
     var finalSqlQuery = "SELECT * FROM orderLimiet";
-    
+    console.log("finalSqlQuery "+finalSqlQuery);
     //settingOrderBittrex
     if(settingOrdersBittrex == true){
         
@@ -63,10 +65,6 @@ Router.post('/', function(req, res){
     };
     
     if(sqlQuery != finalSqlQuery){
-        console.log(sqlRequest());
-    }
-    
-    function sqlRequest(){
         MYSQLConnection.query(sqlQuery, function (error, results, fields) {
             // error will be an Error if one occurred during the query 
             // results will contain the results of the query 
@@ -75,19 +73,16 @@ Router.post('/', function(req, res){
                 console.log(error);
             } else {
                 console.log("results "+JSON.stringify(results));
-                res.send(results[0]);
+                res.send(results);
             }
-        });
-    };
-    console.log(sqlRequest(sqlQuery));
+        }); 
+    } else {
+        res.send("false");
+    }
+    
 });
 
-exports.ordersGetList = function(sql, ip) {
-    
-    
-    
-};
-
+//export Router
 module.exports = Router;
 
-console.log(ConsoleColor.log()+"Orders.js is beschikbaar.");
+//console.log(ConsoleColor.log()+"Orders.js is beschikbaar.");
