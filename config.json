@@ -10,14 +10,14 @@
         "host": "localhost",
         "user": "root",
         "password": "Pulsar11",
-        "DBName": "cryptoData"
+        "DBName": "cryptoData2_0"
     },
     
     "mysqlDeveloperDatabase": {
         "host": "localhost",
         "user": "root",
         "password": "Pulsar11",
-        "DBName": "cryptoData"
+        "DBName": "cryptoData2_0"
     },
     
     "developerModes": true
