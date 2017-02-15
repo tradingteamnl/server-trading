@@ -67,15 +67,16 @@ function callback(error, response,body) {
                 'Volume': marktData[i].Volume,
                 'VolumeBTC': btcHandelsVolume,
                 'Bid': marktData[i].Bid,
+                'Last': marktData[i].Last,
                 'Ask': marktData[i].Ask,
                 'OpenBuyOrders': marktData[i].OpenBuyOrders,
                 'OpenSellOrders': marktData[i].OpenSellOrders
             };
 
             //INSERT INFO QUARY
-            var INSERTINFOQuary = "INSERT INTO `cryptoData`.`bittrexmarktdata` (`Markt`, `High`, `Low`, `Volume`, `Bid`, `Ask`, `OpenBuyOrders`, `OpenSellOrders`, `Datum`, `Time`, `VolumeBTC`)"
+            var INSERTINFOQuary = "INSERT INTO `cryptoData`.`bittrexmarktdata` (`Markt`, `High`, `Low`, `Volume`, `Bid`, `Ask`, `OpenBuyOrders`, `OpenSellOrders`, `Datum`, `Time`, `VolumeBTC`, `Last`)"
                 + "VALUES ('" + data.Markt + "','" + data.High + "', '" + data.Low + "', '" + data.Volume 
-                + "', '" + data.Bid + "', '" + data.Ask +  "', '" +data.OpenBuyOrders + "', '" + data.OpenSellOrders + "', '"+Time.dag()+"', '"+Time.time()+"', '"+data.VolumeBTC+"')";
+                + "', '" + data.Bid + "', '" + data.Ask +  "', '" +data.OpenBuyOrders + "', '" + data.OpenSellOrders + "', '"+Time.dag()+"', '"+Time.time()+"', '"+data.VolumeBTC+"', '" + data.Last + "')";
 
             //query
             MYSQLConnection.query(INSERTINFOQuary, function (err) {

@@ -9,7 +9,7 @@ var app = express();
 var ConsoleColor = require('./ConsoleColor.js');
 
 //laat requires
-//require('./bittrex/bittrexMarketRequest.js');
+require('./bittrex/bittrexMarketRequest.js');
 //require('./core/berekenGemiddelde.js');
 //require('./coinbase/CoinbaseMarketRequest');
 
@@ -17,6 +17,6 @@ var ConsoleColor = require('./ConsoleColor.js');
 app.use('/api', require('./router/index.js'));
 
 //great server
-app.listen(8080, function(){
+app.listen(8081, function(){
     console.log(ConsoleColor.log()+"Server is aan.");
 });
