@@ -16,12 +16,7 @@ var Time = require(fileLocation+'/Time.js');
 var config = JSON.parse(fs.readFileSync(fileLocation+"/config.json"));
 
 //connection
-var MYSQLConnection = mysql.createConnection({
-  host     : config.mysql.host,
-  user     : config.mysql.user,
-  password : config.mysql.password,
-  database : config.mysql.DBName
-});
+var MYSQLConnection = mysql.createConnection(configGetter.MysqlCreatConnection());
 
 //options
 var options = {
@@ -78,15 +73,27 @@ function callback(error, response,body) {
                 + "VALUES ('" + data.Markt + "','" + data.High + "', '" + data.Low + "', '" + data.Volume 
                 + "', '" + data.Bid + "', '" + data.Ask +  "', '" +data.OpenBuyOrders + "', '" + data.OpenSellOrders + "', '"+Time.dag()+"', '"+Time.time()+"', '"+data.VolumeBTC+"', '" + data.Last + "')";
 
-            //query
-            MYSQLConnection.query(INSERTINFOQuary, function (err) {
-                if (err) {
-                    console.log(err);
-                    console.error(ConsoleColor.error()+"Probleem bij data naar bittrexmarktdata te pushen.");
-                } else {
-                    console.log(ConsoleColor.log()+"Data in bittrex gezet.");
-                }
-            });
+            //even kijken of alle data beschikbaar is
+            if(data.High != null && data.Low != null && data.Volume != null && data.Bid != null && data.Ask != null && data.OpenBuyOrders != null && data.OpenSellOrders != null && data.Last != null){
+                //INSERT INFO QUARY
+                var INSERTINFOQuary = "INSERT INTO `cryptoData`.`bittrexmarktdata` (`Markt`, `High`, `Low`, `Volume`, `Bid`, `Ask`, `OpenBuyOrders`, `OpenSellOrders`, `Datum`, `Time`, `VolumeBTC`, `Last`)"
+                    + "VALUES ('" + data.Markt + "','" + data.High + "', '" + data.Low + "', '" + data.Volume 
+                    + "', '" + data.Bid + "', '" + data.Ask +  "', '" +data.OpenBuyOrders + "', '" + data.OpenSellOrders + "', '"+Time.dag()+"', '"+Time.time()+"', '"+data.VolumeBTC+"', '" + data.Last + "')";
+
+                //query
+                MYSQLConnection.query(INSERTINFOQuary, function (err) {
+                    if (err) {
+                        console.log(err);
+                        console.error(ConsoleColor.error()+"Probleem bij data naar bittrexmarktdata te pushen.");
+                    } else {
+                        console.log(ConsoleColor.log()+"Data in bittrex gezet.");
+                    }
+                });
+            } else {
+                
+                //hier kan nog een error systeem komen als je wilt
+                
+            }
         }
     }
 }
