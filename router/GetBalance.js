@@ -71,7 +71,7 @@ Router.post('/', function (req, res) {
             }
 
             balanceData['bittrex'] = bittrex;
-            
+
             //send data
             res.send(balanceData);
         }
