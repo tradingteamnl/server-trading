@@ -24,7 +24,7 @@ MYSQLConnection.connect(function(err){
     if(err){
         console.error(ConsoleColor.error()+err);
     } else {
-        console.log(ConsoleColor.log()+"Connectie met mysql.");
+        console.log(ConsoleColor.log()+"Connectie met mysql. Bij GetOrders.js.");
     }
 });
 
@@ -35,20 +35,20 @@ Router.post('/', function(req, res){
     var ip = GetIpAddress.ipAddress(req);
     //var tempData = JSON.parse(req.body);
     var tempData = req.body;
-    var settingOrdersBittrex = JSON.parse(tempData[0]).bittrex;
-    var settingOrdersPoloniex = JSON.parse(tempData[0]).poloniex;
+    var settingOrdersBittrex = tempData[0].bittrex;
+    var settingOrdersPoloniex = tempData[0].poloniex;
     
     console.log(req.body);
     //var sql
     var sqlQuery = "SELECT * FROM orderLimiet";
     var finalSqlQuery = "SELECT * FROM orderLimiet";
     console.log("finalSqlQuery "+finalSqlQuery);
+    
     //settingOrderBittrex
     if(settingOrdersBittrex == true){
         
         if(sqlQuery == finalSqlQuery) {
-            sqlQuery += " WHERE handelsplaats='bittrex'";   
-            console.log(sqlQuery);
+            sqlQuery += " WHERE handelsplaats='bittrex'";
         } else {
             sqlQuery += " AND handelsplaats='bittrex";
         }
