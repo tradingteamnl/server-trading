@@ -33,19 +33,16 @@ Router.post('/', function(req, res){
     
     //verwerk alle data van het inkomende verkeer
     var ip = GetIpAddress.ipAddress(req);
-    //var tempData = JSON.parse(req.body);
     var tempData = req.body;
     var settingOrdersBittrex = tempData[0].bittrex;
     var settingOrdersPoloniex = tempData[0].poloniex;
     
-    console.log(req.body);
     //var sql
     var sqlQuery = "SELECT * FROM orderLimiet";
     var finalSqlQuery = "SELECT * FROM orderLimiet";
-    console.log("finalSqlQuery "+finalSqlQuery);
     
     //settingOrderBittrex
-    if(settingOrdersBittrex == true){
+    if(settingOrdersBittrex == "true"){
         
         if(sqlQuery == finalSqlQuery) {
             sqlQuery += " WHERE handelsplaats='bittrex'";
@@ -55,7 +52,7 @@ Router.post('/', function(req, res){
     };
     
     //settingOrderPoloniex
-    if(settingOrdersPoloniex == true){
+    if(settingOrdersPoloniex == "true"){
         
         if(sqlQuery == finalSqlQuery) {
             sqlQuery += " WHERE handelsplaats='poloniex'";

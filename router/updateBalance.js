@@ -1,10 +1,13 @@
 //load modules
+var bodyParser = require('body-parser');
 var express = require('express');
 var mysql = require('mysql');
 var fs = require('fs');
 
 //Router
 var Router = express.Router();
+Router.use(bodyParser.json());
+Router.use(bodyParser.urlencoded({extended: true}));
 
 //laat config bestanden
 var fileLocation = JSON.parse(fs.readFileSync('./config/fileLocation.txt')).fileLocation;
@@ -26,13 +29,12 @@ MYSQLConnection.connect(function(err){
     }
 });
 
-
 //function
 Router.post('/', function(req, res){
     
     //get ips
     var ip = GetIpAddress.ipAddress(req);
-   
+    console.log("err "+req.body);
     //kijk of balance tabel van het ip adres al bestaat
     MYSQLConnection.query("SHOW TABLES LIKE 'balance';", function (err, resulttwo) {
         if (err) {
@@ -158,7 +160,7 @@ Router.post('/', function(req, res){
                 console.log(ConsoleColor.log()+"Tabel is toegevoegd.");
                 dataVerwerkenBittrex(ip, reqData);
             }
-        })
+        });
     };
 });
 
