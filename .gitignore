@@ -46,8 +46,4 @@ config/fileLocation.txt
 
 *.xml
 
-*.xml
-
-nbproject/private/private.xml
-
-nbproject/private/private.xml
+nbproject/private/private.xml]

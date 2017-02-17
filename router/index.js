@@ -24,5 +24,4 @@ app.use('/ordersystem', require(fileLocation+'/router/GetOrders.js'));
 app.use('/getorder', require(fileLocation+'/router/GetOrders.js'));
 app.use('/getbalance', require(fileLocation+'/router/GetBalance.js'));
 
-//export Router
 module.exports = app;

@@ -16,6 +16,7 @@ var GetIpAddress = require(fileLocation+'/scripts/IpAddress.js');
 var Router = express.Router();
 Router.use(bodyParser.json());
 Router.use(bodyParser.urlencoded({ extended: true }));
+
 //connection
 var MYSQLConnection =  mysql.createConnection(ConfigGetter.MysqlCreatConnection());
 
@@ -62,22 +63,24 @@ Router.post('/', function(req, res){
     };
     
     if(sqlQuery != finalSqlQuery){
+        console.log(sqlRequestv);
+    }
+    
+    function sqlRequestv(){
         MYSQLConnection.query(sqlQuery, function (error, results, fields) {
             // error will be an Error if one occurred during the query 
             // results will contain the results of the query 
             // fields will contain information about the returned results fields (if any) 
             if(error){
                 console.log(error);
+                res.send("false");
             } else {
                 console.log("results "+JSON.stringify(results));
                 res.send(results);
             }
         }); 
-    } else {
-        res.send("false");
     }
-    
-});
+})
 
 //export Router
 module.exports = Router;

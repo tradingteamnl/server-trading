@@ -9,11 +9,9 @@ var app = express();
 var ConsoleColor = require('./ConsoleColor.js');
 
 //laat requires
-//require('./bittrex/bittrexMarketRequest.js');
+require('./bittrex/bittrexMarketRequest.js');
 //require('./core/berekenGemiddelde.js');
 //require('./coinbase/CoinbaseMarketRequest');
-
-var fileLocation = JSON.parse(fs.readFileSync('./config/fileLocation.txt')).fileLocation;
 
 //routers
 //api routers
@@ -23,7 +21,9 @@ app.use('/api', require('./router/index.js'));
 //informatie getter
 app.use('/api/getbalance', require(fileLocation+'/router/GetBalance.js'));
 */
+app.use('/api', require('./router/index.js'));
+
 //great server
-app.listen(8080, function(){
+app.listen(8081, function(){
     console.log(ConsoleColor.log()+"Server is aan.");
 });
