@@ -85,4 +85,4 @@ Router.post('/', function(req, res){
 //export Router
 module.exports = Router;
 
-//console.log(ConsoleColor.log()+"Orders.js is beschikbaar.");
+console.log(ConsoleColor.log()+"GetOrders.js is beschikbaar.");
