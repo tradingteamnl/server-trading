@@ -18,6 +18,7 @@ var fileLocation = JSON.parse(fs.readFileSync('./config/fileLocation.txt')).file
 //post
 app.use('/updatebalance', require(fileLocation+'/router/updateBalance.js'));
 app.use('/getbesteprijs', require(fileLocation+'/router/GetBestePrijs.js'));
+app.use('/ordersystem', require(fileLocation+'/router/GetOrders.js'));
 
 //getter
 app.use('/getorder', require(fileLocation+'/router/GetOrders.js'));
