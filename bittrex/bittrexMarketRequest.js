@@ -52,8 +52,11 @@ function callback(error, response,body) {
             var tradeMarket = marktData[i].MarketName;
 
             //bereken btc handels volume
-            var btcHandelsVolume = marktData[i].Volume * marktData[i].low;
-
+            var btcHandelsVolume = marktData[i].Volume * marktData[i].Low;
+            /*console.log(marktData[i].Volume);
+            console.log(marktData[i].low);
+            console.log(btcHandelsVolume);*/
+            
             //get alle data
             var data = {
                 'Markt': tradeMarket,
@@ -62,23 +65,23 @@ function callback(error, response,body) {
                 'Volume': marktData[i].Volume,
                 'VolumeBTC': btcHandelsVolume,
                 'Bid': marktData[i].Bid,
+                'Last': marktData[i].Last,
                 'Ask': marktData[i].Ask,
                 'OpenBuyOrders': marktData[i].OpenBuyOrders,
                 'OpenSellOrders': marktData[i].OpenSellOrders
             };
-
             //even kijken of alle data beschikbaar is
-            if(data.High != null && data.Low != null && data.Volume != null && data.Bid != null && data.Ask != null && data.OpenBuyOrders != null && data.OpenSellOrders != null){
+            if(data.High != null && data.Low != null && data.Volume != null && data.Bid != null && data.Ask != null && data.OpenBuyOrders != null && data.OpenSellOrders != null && data.Last != null){
                 //INSERT INFO QUARY
-                var INSERTINFOQuary = "INSERT INTO `cryptoData`.`bittrexmarktdata` (`Markt`, `High`, `Low`, `Volume`, `Bid`, `Ask`, `OpenBuyOrders`, `OpenSellOrders`, `Datum`, `Time`, `VolumeBTC`)"
+                var INSERTINFOQuary = "INSERT INTO `cryptoData2_0`.`bittrexmarktdata` (`Markt`, `High`, `Low`, `Volume`, `Bid`, `Ask`, `OpenBuyOrders`, `OpenSellOrders`, `Datum`, `Time`, `VolumeBTC`, `Last`)"
                     + "VALUES ('" + data.Markt + "','" + data.High + "', '" + data.Low + "', '" + data.Volume 
-                    + "', '" + data.Bid + "', '" + data.Ask +  "', '" +data.OpenBuyOrders + "', '" + data.OpenSellOrders + "', '"+Time.dag()+"', '"+Time.time()+"', '"+data.VolumeBTC+"')";
-
+                    + "', '" + data.Bid + "', '" + data.Ask +  "', '" +data.OpenBuyOrders + "', '" + data.OpenSellOrders + "', '"+Time.dag()+"', '"+Time.time()+"', '"+data.VolumeBTC+"', '" + data.Last + "')";
+            
                 //query
                 MYSQLConnection.query(INSERTINFOQuary, function (err) {
                     if (err) {
-                        console.log(err);
-                        console.error(ConsoleColor.error()+"Probleem bij data naar bittrexmarktdata te pushen.");
+                        //console.log(err);
+                        //console.error(ConsoleColor.error()+"Probleem bij data naar bittrexmarktdata te pushen.");
                     } else {
                         console.log(ConsoleColor.log()+"Data in bittrex gezet.");
                     }
@@ -96,5 +99,5 @@ function callback(error, response,body) {
 setInterval(function() {
     request(options, callback);
 }, 60000);
-
+request(options, callback);
 console.log(ConsoleColor.log()+"Bittrex market request.");
