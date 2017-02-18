@@ -41,17 +41,25 @@ function time(){
 
 
 function dag(){
+    var month = new Array();
+    month[0] = "01";
+    month[1] = "02";
+    month[2] = "03";
+    month[3] = "04";
+    month[4] = "05";
+    month[5] = "06";
+    month[6] = "07";
+    month[7] = "08";
+    month[8] = "09";
+    month[9] = "10";
+    month[10] = "11";
+    month[11] = "12";
+
     var date = new Date();
-    
-    //maand
-    if (date.getMonth() < 10){
-        var maand = "0"+date.getMonth()+1;
-    } else {
-        var maand = (date.getMonth())+1;
-    }
+    var maand = month[date.getMonth()];
     
     //dag
-    if (date.getDate() < 10){
+    if (date.getDate() < 9){
         var dag = "0"+date.getDate();
     } else {
         var dag = date.getDate();
