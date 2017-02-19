@@ -12,6 +12,7 @@ Router.use(bodyParser.urlencoded({extended: true}));
 //laat config bestanden
 var fileLoaction = JSON.parse(fs.readFileSync('./config/fileLocation.txt'));
 var config = JSON.parse(fs.readFileSync('./config.json'));
+var GetIpAddress = require(fileLocation+'/scripts/IpAddress.js');
 
 //load codes
 var ConsoleColor = require(fileLoaction.file + '/ConsoleColor.js');
